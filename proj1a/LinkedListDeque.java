@@ -57,10 +57,12 @@ public class LinkedListDeque<T> {
         }
     }
     public T removeFirst(){
+        if(size==0)return null;
         size-=1;
         return removeNode(sentinal.next);
     }
     public T removeLast(){
+        if(size==0)return null;
         size-=1;
         return removeNode(sentinal.prev);
     }

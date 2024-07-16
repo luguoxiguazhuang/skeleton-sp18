@@ -2,9 +2,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestPalindrome {
-    /*// You must use this palindrome, and not instantiate
+    // You must use this palindrome, and not instantiate
     // new Palindromes, or the autograder might be upset.
     static Palindrome palindrome = new Palindrome();
+    static OffByOne offByOne = new OffByOne();
 
     @Test
     public void testWordToDeque() {
@@ -14,5 +15,22 @@ public class TestPalindrome {
             actual += d.removeFirst();
         }
         assertEquals("persiflage", actual);
-    } Uncomment this class once you've created your Palindrome class. */
+    }
+
+    @Test(timeout = 100)
+    public void testIsPalindrome(){
+        assertTrue(palindrome.isPalindrome(""));
+        assertTrue(palindrome.isPalindrome("a"));
+        assertFalse(palindrome.isPalindrome("abb"));
+        assertFalse(palindrome.isPalindrome("1234567"));
+        assertTrue(palindrome.isPalindrome("noon"));
+    }
+
+    @Test(timeout = 100)
+    public void GeneralTestIsPalindrome() {
+        assertTrue(palindrome.isPalindrome("",offByOne));
+        assertTrue(palindrome.isPalindrome("a",offByOne));
+        assertTrue(palindrome.isPalindrome("a120b",offByOne));
+        assertFalse(palindrome.isPalindrome("algdex",offByOne));
+    }
 }

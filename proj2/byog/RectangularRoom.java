@@ -18,7 +18,8 @@ public class RectangularRoom {
     /**Attention: xLeft ,yDown, height, width are parameters of the room's floor, not the border*/
     public RectangularRoom (int xLeft, int yDown, int height, int width,  TETile[][] world) {
         position = new Position(xLeft,yDown,height,width);
-
+        this.height = height;
+        this.width = width;
         //draw the room's floor
         for(int i = position.yDown; i <= position.yUp; i += 1) {
             for(int j = position.xLeft; j <= position.xRight; j += 1) {

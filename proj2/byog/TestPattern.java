@@ -18,7 +18,7 @@ public class TestPattern {
         ter.initialize(WIDTH, HEIGHT);
 
         Game game = new Game();
-        game.putRoomsAndHallways(400000000);
+        game.putRoomsAndHallways(400);
 
         /*game.generateRoom(122, world, rooms);
         game.deleteLastRoom(world, rooms);*/

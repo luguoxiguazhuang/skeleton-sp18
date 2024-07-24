@@ -13,8 +13,8 @@ public class Game {
     public ArrayList<RectangularRoom> rooms;
     public ArrayList<Hallway> hallways;
     private static final int maxGapLength = 3;
-    private static final int roomTotalUpperAmount = 16;
-    private static final int roomTotalLowerAmount = 13;
+    private static final int roomTotalUpperAmount = 20;
+    private static final int roomTotalLowerAmount = 16;
     private static final int roomUpperWidth = 8;
     private static final int roomLowerWidth = 3;
     private static final int roomUpperHeight = 8;
@@ -44,14 +44,15 @@ public class Game {
 
         Random random = new Random(seed);
         int RoomsTotalAmount = random.nextInt(roomTotalLowerAmount,roomTotalUpperAmount);
-        generateRoom(random.nextInt(), world, rooms);
+        generateRoom(random.nextInt(), world, rooms, null);
         TETile[][] oldworld;
         int count = 0;
-
+        int idx = random.nextInt(0, rooms.size());
+        int findcount = 0;
         for (int i = 1; i < RoomsTotalAmount && count < 100000; i += 1, count += 1) {
             oldworld = saveWorld(world);
-            RectangularRoom lastRoom = rooms.getLast();
-            generateRoom(random.nextInt(), world, rooms);
+            RectangularRoom lastRoom = rooms.get(idx);
+            generateRoom(random.nextInt(), world, rooms, lastRoom);
             RectangularRoom newroom = rooms.getLast();
             boolean overlapFlag = false;
 
@@ -61,6 +62,11 @@ public class Game {
                     restoreWorld(world,oldworld);
                     overlapFlag = true;
                     i -= 1;
+                    findcount += 1;
+                    if (findcount > 100) {
+                        idx = random.nextInt(0, rooms.size());
+                        findcount = 0;
+                    }
                     break;
                 }
             }
@@ -70,15 +76,22 @@ public class Game {
                     rooms.removeLast();
                     restoreWorld(world, oldworld);
                     i -= 1;
+                    findcount += 1;
+                    if (findcount > 100) {
+                        idx = random.nextInt(0, rooms.size());
+                        findcount = 0;
+                    }
                 }
                 else {
                     buildHallway(random.nextInt(), lastRoom, newroom);
+                    idx = random.nextInt(0,rooms.size());
+                    findcount = 0;
                 }
             }
         }
     }
 
-    public void generateRoom (int seed,TETile[][] world, ArrayList<RectangularRoom> rooms) {
+    public void generateRoom (int seed,TETile[][] world, ArrayList<RectangularRoom> rooms, RectangularRoom lastRoom) {
         Random random = new Random(seed);
 
         int width = random.nextInt(roomLowerWidth, roomUpperWidth);
@@ -91,7 +104,7 @@ public class Game {
             posY = random.nextInt(1, HEIGHT - height - 1);
         }
         else {
-            RectangularRoom lastRoom = rooms.getLast();
+
             posX = random.nextInt(Math.max(1,lastRoom.border.borderPosition.xLeft - maxGapLength - width - 1),1 + Math.min(WIDTH - width - 2, lastRoom.border.borderPosition.xRight + maxGapLength + 2));
             posY = random.nextInt(Math.max(1, lastRoom.border.borderPosition.yDown - maxGapLength - height - 1), 1 + Math.min(HEIGHT - height - 2,lastRoom.border.borderPosition.yUp + maxGapLength + 2));
         }
@@ -119,7 +132,37 @@ public class Game {
         if (pointInRoom(b.borderPositionDownLeft, a) || pointInRoom(b.borderPositionDownRight, a) || pointInRoom(b.borderPositionUpLeft, a) || pointInRoom(b.borderPositionUpRight, a)) {
             return true;
         }
-        return crossHelper(a, b) || crossHelper(b, a);
+        if (crossHelper(a, b) || crossHelper(b, a)) {
+            return true;
+        };
+
+        int[][] graph = new int[WIDTH][HEIGHT];
+        for (int i = 0; i < WIDTH; i += 1) {
+            for (int j = 0; j < HEIGHT; j += 1) {
+                graph[i][j] = 0;
+            }
+        }
+
+        for (int i = a.border.borderPosition.xLeft; i <= a.border.borderPosition.xRight; i += 1) {
+            for (int j = a.border.borderPosition.yDown; j <= a.border.borderPosition.yUp; j += 1) {
+                graph[i][j] += 1;
+            }
+        }
+
+        for (int i = b.border.borderPosition.xLeft; i <= b.border.borderPosition.xRight; i += 1) {
+            for (int j = b.border.borderPosition.yDown; j <= b.border.borderPosition.yUp; j += 1) {
+                graph[i][j] += 1;
+            }
+        }
+
+        for (int i = 0; i < WIDTH; i += 1) {
+            for (int j = 0; j < HEIGHT; j += 1) {
+                if (graph[i][j] > 1) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**前提是四角均不在方形里*/

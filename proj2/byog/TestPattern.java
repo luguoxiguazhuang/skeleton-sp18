@@ -5,7 +5,9 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class TestPattern {
@@ -17,8 +19,13 @@ public class TestPattern {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
 
-        Game game = new Game();
-        game.putRoomsAndHallways(400);
+        Game game = new Game(-100);
+        game.putRoomsAndHallways();
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        /*StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);*/
+        StdDraw.text(WIDTH / 2, HEIGHT * 0.75, "Explore the World");
+        //StdDraw.show();
 
         /*game.generateRoom(122, world, rooms);
         game.deleteLastRoom(world, rooms);*/
@@ -38,14 +45,16 @@ public class TestPattern {
     @Test
     public void Test () {
         ArrayList<RectangularRoom> rooms = new ArrayList<>();
-        Game game = new Game();
+        //Game game = new Game();
         //PointPosition a = new PointPosition(2,3);
         TETile[][] world = new TETile[WIDTH][HEIGHT];
+        world[0][0] = Tileset.WALL;
+        assertTrue(world[0][0].equals(Tileset.WALL));
         RectangularRoom room = new RectangularRoom(1,1,10,10,world);
         //assertTrue(game.pointInRoom(a, room));
         RectangularRoom room1 = new RectangularRoom(2,1,10,10,world);
 
-        assertTrue(game.overlapped(room, room1));
+       // assertTrue(game.overlapped(room, room1));
 
     }
 

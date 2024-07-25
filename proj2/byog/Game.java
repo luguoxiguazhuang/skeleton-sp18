@@ -3,13 +3,15 @@ package byog;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
 
 import java.util.Random;
 import java.util.ArrayList;
 
 public class Game {
-    private static final int WIDTH = 60;
-    private static final int HEIGHT = 30;
+    public int seed;
+    public int WIDTH = 60;
+    public int HEIGHT = 30;
     public ArrayList<RectangularRoom> rooms;
     public ArrayList<Hallway> hallways;
     private static final int maxGapLength = 3;
@@ -22,11 +24,11 @@ public class Game {
 
     TETile[][] world;
 
-    public Game() {
+    public Game(int seed) {
         world = new TETile[WIDTH][HEIGHT];
         rooms = new ArrayList<RectangularRoom>();
         hallways = new ArrayList<Hallway>();
-
+        this.seed = seed;
         //initial the world
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < HEIGHT; y += 1) {
@@ -35,12 +37,19 @@ public class Game {
         }
     }
 
-    public TETile[][] playWithInputString(String input){
+    public void playWithKeyboard(){
+        putRoomsAndHallways();
+        Door entranceDoor = new Door(this);
+        entranceDoor.draw(world);
+        Door exitDoor = new Door(this);
+        exitDoor.draw(world);
 
-        return world;
+
     }
 
-    public void putRoomsAndHallways (long seed) {
+
+
+    public void putRoomsAndHallways () {
 
         Random random = new Random(seed);
         int RoomsTotalAmount = random.nextInt(roomTotalLowerAmount,roomTotalUpperAmount);
